@@ -13,7 +13,7 @@ import {
 } from "pixi.js";
   import { gsap } from "gsap";
 
-  const SYMBOLS_IDS: number[] = [1, 3, 2, 4, 5, 6, 2, 6, 7, 2, 4, 4, 3, 3, 3];
+  const SYMBOLS_IDS: number[] = [0,1,2,3,4,5,6,7,8,9,10,11,10,9,8,7,6,5,4,3,2,1];
 
   export async function slotMachine() {
     // Create a new application
@@ -25,32 +25,54 @@ import {
     // Append the application canvas to the document body
     document.body.appendChild(app.canvas);
 
+    // const textureMap: Record<string, Texture> = {};
+    //
+    // const texturePaths = [
+    //   "A", "J", "K", "Q", "Pic_A_00", "Pic_B_00", "Pic_C_00",
+    //   "Pic_D_00", "Pic_E_00", "Prize_00", "Wild_00"
+    // ];
+    //
+    // await Assets.load(texturePaths.map(name => `assets/Images/${name}.png`));
+    //
+    // for (const name of texturePaths) {
+    //   textureMap[name] = Texture.from(`assets/Images/${name}.png`);
+    // }
+
+    // const sprite = new Sprite(textureMap["A"]); // начальная текстура
+    // Позже при смене текстуры:
+    // symbolSprites[i].texture = textureMap["Wild_00"];
+
     // Load the textures
     await Assets.load([
-      "https://pixijs.com/assets/eggHead.png",
-      "https://pixijs.com/assets/flowerTop.png",
-      "https://pixijs.com/assets/helmlok.png",
-      "https://pixijs.com/assets/skully.png",
+      "Images/A.png",
+      "Images/J.png",
+      "Images/K.png",
+      "Images/Q.png",
+      "Images/Pic_A_00.png",
+      "Images/Pic_B_00.png",
+      "Images/Pic_C_00.png",
+      "Images/Pic_D_00.png",
+      "Images/Pic_E_00.png",
+      "Images/Prize_00.png",
+      "Images/Wild_00.png",
     ]);
 
     const REEL_WIDTH = 160;
     const SYMBOL_SIZE = 150;
 
-    // Create different slot symbols
+    // // Create different slot symbols
     const slotTextures = [
-      Texture.from("https://pixijs.com/assets/eggHead.png"),
-      Texture.from("https://pixijs.com/assets/eggHead.png"),
-      Texture.from("https://pixijs.com/assets/eggHead.png"),
-      Texture.from("https://pixijs.com/assets/eggHead.png"),
-      Texture.from("https://pixijs.com/assets/flowerTop.png"),
-      Texture.from("https://pixijs.com/assets/flowerTop.png"),
-      Texture.from("https://pixijs.com/assets/flowerTop.png"),
-      Texture.from("https://pixijs.com/assets/flowerTop.png"),
-      Texture.from("https://pixijs.com/assets/helmlok.png"),
-      Texture.from("https://pixijs.com/assets/helmlok.png"),
-      Texture.from("https://pixijs.com/assets/helmlok.png"),
-      Texture.from("https://pixijs.com/assets/skully.png"),
-      Texture.from("https://pixijs.com/assets/skully.png"),
+      Texture.from("Images/A.png"),
+      Texture.from("Images/J.png"),
+      Texture.from("Images/K.png"),
+      Texture.from("Images/Q.png"),
+      Texture.from("Images/Pic_A_00.png"),
+      Texture.from("Images/Pic_B_00.png"),
+      Texture.from("Images/Pic_C_00.png"),
+      Texture.from("Images/Pic_D_00.png"),
+      Texture.from("Images/Pic_E_00.png"),
+      Texture.from("Images/Prize_00.png"),
+      Texture.from("Images/Wild_00.png"),
     ];
 
     // Build the reels
@@ -172,16 +194,18 @@ import {
 
     for (let i = 0; i < reels.length; i++) {
       const r = reels[i];
-      const target = r.position + 10;
+      const target = r.position + 5 + (i + 1);
+      const duration = 1 + (i * 0.3);
       // debugger
 
         gsap.to(r, {
           position: target,
-          duration: 2,
+          duration: duration,
           ease: "",
           onComplete: () => reelsComplete(i),
           onUpdate: () => {
             SetBlur(r);
+            // debugger
             MoveToTop(r);
           },
         });
@@ -220,13 +244,15 @@ import {
 
           if (s.y < 0 && prevy > SYMBOL_SIZE) {
             s.texture =
-                slotTextures[SYMBOLS_IDS[r.reelId * 3 + j]];
+                slotTextures[SYMBOLS_IDS[r.reelId * 4 + j]];
+            console.log(`image id = ${r.reelId * 4 + j} reel id = ${r.reelId} symbol id = ${j} slotTextures = ${SYMBOLS_IDS[r.reelId * 4 + j]}`)
             // debugger
             s.scale.x = s.scale.y = Math.min(
                 SYMBOL_SIZE / s.texture.width,
                 SYMBOL_SIZE / s.texture.height,
             );
             s.x = Math.round((SYMBOL_SIZE - s.width) / 2);
+            debugger
           }
         }
       }
