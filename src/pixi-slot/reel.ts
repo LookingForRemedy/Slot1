@@ -1,5 +1,5 @@
 import { BlurFilter, Container, Sprite, type Texture } from "pixi.js";
-import { createSymbol } from "./utils.ts";
+import { createSymbol, getSlotTextures } from "./utils.ts";
 
 export class Reel {
   container: Container;
@@ -30,9 +30,10 @@ export class Reel {
     this.container.addChild(symbol);
   }
 
-  createSymbolsForReel(textures: Texture[], symbolCount: number) {
+  createSymbolsForReel(symbolCount: number) {
+    const SLOT_TEXTURES: Texture[] = getSlotTextures();
     for (let symbolNum = 0; symbolNum < symbolCount; symbolNum++) {
-      const symbol = createSymbol(textures, symbolNum);
+      const symbol = createSymbol(SLOT_TEXTURES, symbolNum);
       this.addSymbol(symbol);
     }
   }
