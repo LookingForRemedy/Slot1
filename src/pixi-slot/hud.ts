@@ -23,7 +23,7 @@ export function generateGradientFill(): FillGradient {
   return fill;
 }
 
-export function generateTop(
+export function generateHudTop(
   screen: Rectangle,
   margin: number,
   style: TextStyle,
@@ -41,7 +41,7 @@ export function generateTop(
   return top;
 }
 
-export function generateBottom(
+export function generateHudBottom(
   screen: Rectangle,
   margin: number,
   style: TextStyle,
@@ -51,6 +51,9 @@ export function generateBottom(
   const bottom: Graphics = new Graphics()
     .rect(0, SYMBOL_SIZE * 3 + margin, screen.width, margin)
     .fill({ color: 0x0 });
+
+  bottom.eventMode = "static";
+  bottom.cursor = "pointer";
 
   playText.x = Math.round((screen.width - playText.width) / 2);
   playText.y =
