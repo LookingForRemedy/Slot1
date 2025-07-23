@@ -196,20 +196,18 @@ import {
       const r = reels[i];
       const target = r.position + 5 + (i + 1);
       const duration = 1 + (i * 0.3);
-      // debugger
 
-        gsap.to(r, {
-          position: target,
-          duration: duration,
-          ease: "",
-          onComplete: () => reelsComplete(i),
-          onUpdate: () => {
-            SetBlur(r);
-            // debugger
-            MoveToTop(r);
-          },
-        });
-      }
+      gsap.to(r, {
+        position: target,
+        duration: duration,
+        ease: "",
+        onComplete: () => reelsComplete(i),
+        onUpdate: () => {
+          SetBlur(r);
+          MoveToTop(r);
+        },
+      });
+    }
 
       // Reels done handler.
       function SetBlur(r: any) {
@@ -226,7 +224,6 @@ import {
           if (s.y < 0 && prevy > SYMBOL_SIZE) {
             s.texture =
               slotTextures[Math.floor(Math.random() * slotTextures.length)];
-            // debugger
             s.scale.x = s.scale.y = Math.min(
               SYMBOL_SIZE / s.texture.width,
               SYMBOL_SIZE / s.texture.height,
@@ -243,16 +240,13 @@ import {
           s.y = ((r.position + j) % r.symbols.length) * SYMBOL_SIZE - SYMBOL_SIZE;
 
           if (s.y < 0 && prevy > SYMBOL_SIZE) {
-            s.texture =
-                slotTextures[SYMBOLS_IDS[r.reelId * 4 + j]];
+            s.texture = slotTextures[SYMBOLS_IDS[r.reelId * 4 + j]];
             console.log(`image id = ${r.reelId * 4 + j} reel id = ${r.reelId} symbol id = ${j} slotTextures = ${SYMBOLS_IDS[r.reelId * 4 + j]}`)
-            // debugger
             s.scale.x = s.scale.y = Math.min(
                 SYMBOL_SIZE / s.texture.width,
                 SYMBOL_SIZE / s.texture.height,
             );
             s.x = Math.round((SYMBOL_SIZE - s.width) / 2);
-            debugger
           }
         }
       }
@@ -260,25 +254,22 @@ import {
       // Reels done handler.
       function reelsComplete(index: any) {
         console.log(index);
+        const r = reels[index];
+        const target = r.position + 4;
+
+        gsap.to(r, {
+          position: target,
+          duration: 1,
+          ease: "",
+          // onComplete: () => reelsComplete(i),
+          onUpdate: () => {
+            SetBlur(r);
+            MoveToTopLast(r);
+          },
+        });
+
         if (index === reels.length - 1) {
           running = false;
-
-          for (let i = 0; i < reels.length; i++) {
-            const r = reels[i];
-            const target = r.position + 4;
-            // debugger
-
-            gsap.to(r, {
-              position: target,
-              duration: 1,
-              ease: "",
-              // onComplete: () => reelsComplete(i),
-              onUpdate: () => {
-                SetBlur(r);
-                MoveToTopLast(r);
-              },
-            });
-          }
         }
       }
     }
