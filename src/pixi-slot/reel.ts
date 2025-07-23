@@ -10,12 +10,12 @@ export class Reel {
   reelId: number | null;
 
   constructor(
+    reelId: number,
     container: Container = new Container(),
     position: number = 0,
     previousPosition: number = 0,
     symbols: Sprite[] = [],
     blur: BlurFilter = new BlurFilter(),
-    reelId: number | null = null,
   ) {
     this.container = container;
     this.symbols = symbols;

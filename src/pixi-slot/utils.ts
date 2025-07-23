@@ -35,7 +35,7 @@ export function getSlotTextures(): Texture[] {
 }
 
 export function createReel(reelNum: number): Reel {
-  const reel = new Reel();
+  const reel = new Reel(reelNum);
 
   reel.container.x = reelNum * REEL_WIDTH;
   reel.container.filters = [reel.blur];

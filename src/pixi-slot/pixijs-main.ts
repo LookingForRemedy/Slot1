@@ -75,7 +75,7 @@ export async function slotMachine() {
         position: target,
         duration: duration,
         ease: "",
-        onComplete: () => reelsComplete(reelNum),
+        onComplete: () => reelsComplete(reel),
         onUpdate: () => {
           SetBlur(reel);
           MoveToTop(reel);
@@ -132,8 +132,7 @@ export async function slotMachine() {
       }
     }
 
-    function reelsComplete(index: any) {
-      const reel = reels[index];
+    function reelsComplete(reel: Reel) {
       const target = reel.position + SYMBOL_COUNT;
 
       gsap.to(reel, {
@@ -146,7 +145,7 @@ export async function slotMachine() {
         },
       });
 
-      if (index === reels.length - 1) {
+      if (reel.reelId === reels.length - 1) {
         running = false;
       }
     }
