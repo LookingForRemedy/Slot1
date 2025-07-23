@@ -9,7 +9,10 @@ import {
 import { SYMBOL_SIZE } from "./constants.ts";
 
 export function generateGradientFill(): FillGradient {
-  const fill = new FillGradient(0, 0, 0, 2);
+  const fill = new FillGradient({
+    start: { x: 0, y: 0 },
+    end: { x: 0, y: 2 },
+  });
 
   const colors = [0xffffff, 0x00ff99].map((color) =>
     Color.shared.setValue(color).toNumber(),
@@ -32,7 +35,7 @@ export function generateHudTop(
     .rect(0, 0, screen.width, margin)
     .fill({ color: 0x0 });
 
-  const headerText = new Text("PIXI MONSTER SLOTS!", style);
+  const headerText = new Text({ text: "PIXI MONSTER SLOTS!", style });
   headerText.x = Math.round((top.width - headerText.width) / 2);
   headerText.y = Math.round((margin - headerText.height) / 2);
 
@@ -46,7 +49,7 @@ export function generateHudBottom(
   margin: number,
   style: TextStyle,
 ): Graphics {
-  const playText = new Text("Spin the wheels!", style);
+  const playText = new Text({ text: "Spin the wheels!", style });
 
   const bottom: Graphics = new Graphics()
     .rect(0, SYMBOL_SIZE * 3 + margin, screen.width, margin)

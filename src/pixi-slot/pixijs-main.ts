@@ -68,6 +68,7 @@ export async function slotMachine() {
 
     for (let reelNum = 0; reelNum < reels.length; reelNum++) {
       const reel = reels[reelNum];
+      reel.position = 0;
       const target = reel.position + REELS_COUNT + (reelNum + 1);
       const duration = 1 + reelNum * 0.3;
 
@@ -114,21 +115,24 @@ export async function slotMachine() {
         symbolNum >= 0;
         symbolNum--
       ) {
-        const sprite: Sprite = reel.symbols[symbolNum];
-        const prevY = sprite.y;
-        sprite.y =
+        const symbol: Sprite = reel.symbols[symbolNum];
+        const prevY = symbol.y;
+        symbol.y =
           ((reel.position + symbolNum) % reel.symbols.length) * SYMBOL_SIZE -
           SYMBOL_SIZE;
 
-        if (sprite.y < 0 && prevY > SYMBOL_SIZE && reel.reelId) {
-          sprite.texture =
-            SLOT_TEXTURES[SYMBOLS_IDS[reel.reelId + symbolNum * SYMBOL_COUNT]];
-          sprite.scale.x = sprite.scale.y = Math.min(
-            SYMBOL_SIZE / sprite.texture.width,
-            SYMBOL_SIZE / sprite.texture.height,
+        if (symbol.y < 0 && prevY > SYMBOL_SIZE && reel.reelId !== null) {
+          const symbolId: number = reel.reelId * (REELS_COUNT - 1) + symbolNum;
+          symbol.texture = SLOT_TEXTURES[SYMBOLS_IDS[symbolId]];
+          symbol.scale.x = symbol.scale.y = Math.min(
+            SYMBOL_SIZE / symbol.texture.width,
+            SYMBOL_SIZE / symbol.texture.height,
           );
-          sprite.x = Math.round((SYMBOL_SIZE - sprite.width) / 2);
+          symbol.x = Math.round((SYMBOL_SIZE - symbol.width) / 2);
         }
+      }
+      if (reel.reelId === reels.length - 1) {
+        running = false;
       }
     }
 
@@ -144,10 +148,6 @@ export async function slotMachine() {
           MoveToTopLast(reel);
         },
       });
-
-      if (reel.reelId === reels.length - 1) {
-        running = false;
-      }
     }
   }
 }

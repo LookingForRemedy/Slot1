@@ -40,8 +40,8 @@ export function createReel(reelNum: number): Reel {
   reel.container.x = reelNum * REEL_WIDTH;
   reel.container.filters = [reel.blur];
 
-  reel.blur.blurX = 0;
-  reel.blur.blurY = 0;
+  reel.blur.strengthX = 0;
+  reel.blur.strengthY = 0;
 
   return reel;
 }
@@ -50,7 +50,6 @@ export function createSymbol(textures: Texture[], symbolNum: number): Sprite {
   const symbol = new Sprite(
     textures[Math.floor(Math.random() * textures.length)],
   );
-  // Scale the symbol to fit symbol area.
 
   symbol.y = symbolNum * SYMBOL_SIZE;
   symbol.scale.x = symbol.scale.y = Math.min(
