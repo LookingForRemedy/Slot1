@@ -8,7 +8,7 @@ import {
   generateHudTop,
   generateTextStyle,
 } from "./hud.ts";
-import { moveReel } from "./reel-logic.ts";
+import {moveReel, stopSpin} from "./reel-logic.ts";
 
 export async function slotMachine() {
   const app = new Application();
@@ -46,14 +46,14 @@ export async function slotMachine() {
   const textStyle = generateTextStyle(gradientFill);
 
   const hudTop = generateHudTop(app.screen, margin, textStyle);
-  const hudBottom = generateHudBottom(app.screen, margin, textStyle);
+  const hudBottom = generateHudBottom(app.screen, margin, textStyle, () => startPlay(), () => StopPlay());
 
   app.stage.addChild(hudTop);
   app.stage.addChild(hudBottom);
 
-  hudBottom.addListener("pointerdown", () => {
-    startPlay();
-  });
+  // hudBottom.addListener("pointerdown", () => {
+  //   startPlay();
+  // });
 
   function startPlay() {
     if (isRunning) return;
@@ -61,6 +61,14 @@ export async function slotMachine() {
 
     for (const reel of reels) {
       moveReel(reel);
+    }
+  }
+
+  function StopPlay(): void {
+    isRunning = false;
+
+    for (const reel of reels) {
+      stopSpin(reel);
     }
   }
 }

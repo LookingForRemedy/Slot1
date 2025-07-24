@@ -32,8 +32,8 @@ export function generateHudTop(
   style: TextStyle,
 ): Graphics {
   const top = new Graphics()
-    .rect(0, 0, screen.width, margin)
-    .fill({ color: 0x0 });
+    .rect(0, 0, screen.width, margin);
+    // .fill({ color: 0x0 });
 
   const headerText = new Text({ text: "PIXI MONSTER SLOTS!", style });
   headerText.x = Math.round((top.width - headerText.width) / 2);
@@ -48,21 +48,42 @@ export function generateHudBottom(
   screen: Rectangle,
   margin: number,
   style: TextStyle,
+  play: () => void,
+  stop: () => void,
 ): Graphics {
-  const playText = new Text({ text: "Spin the wheels!", style });
+  const playText = new Text({ text: "Spin", style });
+  const stopText = new Text({ text: "stop", style });
 
   const bottom: Graphics = new Graphics()
-    .rect(0, SYMBOL_SIZE * 3 + margin, screen.width, margin)
-    .fill({ color: 0x0 });
+    .rect(0, SYMBOL_SIZE * 3 + margin, screen.width, margin);
+    // .fill({ color: 0x0 });
+
+  playText.eventMode = "static";
+  stopText.eventMode = "static";
 
   bottom.eventMode = "static";
   bottom.cursor = "pointer";
 
-  playText.x = Math.round((screen.width - playText.width) / 2);
-  playText.y =
-    screen.height - margin + Math.round((margin - playText.height) / 2);
+  playText.x = Math.round((screen.width - playText.width) / 4);
+  // playText.x = 0;
+  playText.y = screen.height - margin + Math.round((margin - playText.height) / 4);
+  // playText.y = 0;
+
+  stopText.x = Math.round((screen.width - stopText.width));
+  stopText.y = screen.height - margin + Math.round((margin - stopText.height));
+
+  playText.addListener("pointerdown", () => {
+    play();
+    console.log("ttt")
+  });
+
+  stopText.addListener("pointerdown", () => {
+    stop();
+    console.log("ttt")
+  });
 
   bottom.addChild(playText);
+  bottom.addChild(stopText);
 
   return bottom;
 }

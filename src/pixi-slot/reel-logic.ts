@@ -10,22 +10,28 @@ import { type Sprite, Texture } from "pixi.js";
 import { getSlotTextures } from "./utils.ts";
 
 export function moveReel(reel: Reel): void {
-  reel.position = 0;
-  const target = reel.position + SYMBOL_COUNT;
-  const duration = 1 + reel.reelId! * 0.3;
+  // reel.position = 0;
+  // const target = reel.position + SYMBOL_COUNT;
+  // const duration = 1 + reel.reelId! * 0.3;
+  //
+  // gsap.to(reel, {
+  //   position: target,
+  //   duration: duration,
+  //   ease: "sine.inOut",
+  //   onComplete: () => {
+  //     reelsComplete(reel);
+  //   },
+  //   onUpdate: () => {
+  //     setBlur(reel);
+  //     moveToTop(reel);
+  //   },
+  // });
 
-  gsap.to(reel, {
-    position: target,
-    duration: duration,
-    ease: "sine.inOut",
-    onComplete: () => {
-      reelsComplete(reel);
-    },
-    onUpdate: () => {
-      setBlur(reel);
-      moveToTop(reel);
-    },
-  });
+  reel.spinReel();
+}
+
+export function stopSpin(reel: Reel): void {
+  reel.stopSpin();
 }
 
 function setBlur(reel: Reel) {
