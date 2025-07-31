@@ -8,3 +8,4 @@ export const SYMBOLS_IDS: number[] = [
 export const REELS_COUNT = 5;
 
 export const SYMBOL_COUNT = 4;
+export const VISIBLE_SYMBOL_COUNT = 3;

@@ -1,74 +1,61 @@
 import { Application, Container } from "pixi.js";
-import { createReel, loadTextureAssets } from "./utils.ts";
-import { REELS_COUNT, SYMBOL_COUNT, SYMBOL_SIZE } from "./constants.ts";
-import { Reel } from "./reel.ts";
+import { generateReelsArray, loadTextureAssets } from "./utils.ts";
 import {
-  generateGradientFill,
-  generateHudBottom,
-  generateHudTop,
-  generateTextStyle,
-} from "./hud.ts";
-import {moveReel, stopSpin} from "./reel-logic.ts";
+  SYMBOL_COUNT,
+  SYMBOL_SIZE,
+  VISIBLE_SYMBOL_COUNT,
+} from "./constants/constants.ts";
+import { Reel } from "./reel.ts";
+import { generateHudBottom, generateHudTop, generateTextStyle } from "./hud.ts";
+import { BACKGROUND_COLOR } from "./constants/style.constants.ts";
+import { gsap } from "gsap";
 
 export async function slotMachine() {
   const app = new Application();
 
-  await app.init({ background: "#1099bb", resizeTo: window });
+  await app.init({ background: BACKGROUND_COLOR, resizeTo: window });
 
   document.body.appendChild(app.canvas);
 
   await loadTextureAssets();
 
-  const REEL_CONTAINER = new Container();
+  const HUD_MARGIN =
+    (app.screen.height - SYMBOL_SIZE * VISIBLE_SYMBOL_COUNT) / 2;
 
-  let isRunning = false;
+  const REEL_CONTAINER = new Container({
+    y: HUD_MARGIN,
+    x: Math.round(app.screen.width / SYMBOL_COUNT),
+  });
 
-  const margin = (app.screen.height - SYMBOL_SIZE * 3) / 2;
+  const reels: Reel[] = generateReelsArray(REEL_CONTAINER);
 
-  REEL_CONTAINER.y = margin;
-  REEL_CONTAINER.x = Math.round(app.screen.width / 4);
+  const masterTimeline = gsap.timeline();
 
-  const reels: Reel[] = [];
-  for (let reelNum = 0; reelNum < REELS_COUNT; reelNum++) {
-    const reel = createReel(reelNum);
-
-    REEL_CONTAINER.addChild(reel.container);
-
-    reels.push(reel);
-
-    reel.createSymbolsForReel(SYMBOL_COUNT);
+  for (const reel of reels) {
+    masterTimeline.add(reel.reelTweenTimeline);
   }
 
   app.stage.addChild(REEL_CONTAINER);
 
-  const gradientFill = generateGradientFill();
+  const textStyle = generateTextStyle();
 
-  const textStyle = generateTextStyle(gradientFill);
-
-  const hudTop = generateHudTop(app.screen, margin, textStyle);
-  const hudBottom = generateHudBottom(app.screen, margin, textStyle, () => startPlay(), () => StopPlay());
+  const hudTop = generateHudTop(app.screen, HUD_MARGIN, textStyle);
+  const hudBottom = generateHudBottom(
+    app.screen,
+    HUD_MARGIN,
+    textStyle,
+    () => startPlay(),
+    () => stopPlay(),
+  );
 
   app.stage.addChild(hudTop);
   app.stage.addChild(hudBottom);
 
-  // hudBottom.addListener("pointerdown", () => {
-  //   startPlay();
-  // });
-
   function startPlay() {
-    if (isRunning) return;
-    isRunning = true;
-
-    for (const reel of reels) {
-      moveReel(reel);
-    }
+    masterTimeline.resume();
   }
 
-  function StopPlay(): void {
-    isRunning = false;
-
-    for (const reel of reels) {
-      stopSpin(reel);
-    }
+  function stopPlay(): void {
+    masterTimeline.pause();
   }
 }

@@ -1,12 +1,12 @@
 import {
-  Color,
   FillGradient,
   Graphics,
   type Rectangle,
   Text,
   TextStyle,
 } from "pixi.js";
-import { SYMBOL_SIZE } from "./constants.ts";
+import { SYMBOL_SIZE } from "./constants/constants.ts";
+import { GRADIENT_COLORS, HUD_COLOR } from "./constants/style.constants.ts";
 
 export function generateGradientFill(): FillGradient {
   const fill = new FillGradient({
@@ -14,12 +14,8 @@ export function generateGradientFill(): FillGradient {
     end: { x: 0, y: 2 },
   });
 
-  const colors = [0xffffff, 0x00ff99].map((color) =>
-    Color.shared.setValue(color).toNumber(),
-  );
-
-  colors.forEach((number, index) => {
-    const ratio = index / colors.length;
+  GRADIENT_COLORS.forEach((number, index) => {
+    const ratio = index / GRADIENT_COLORS.length;
 
     fill.addColorStop(ratio, number);
   });
@@ -32,12 +28,15 @@ export function generateHudTop(
   style: TextStyle,
 ): Graphics {
   const top = new Graphics()
-    .rect(0, 0, screen.width, margin);
-    // .fill({ color: 0x0 });
+    .rect(0, 0, screen.width, margin)
+    .fill({ color: HUD_COLOR });
 
-  const headerText = new Text({ text: "PIXI MONSTER SLOTS!", style });
-  headerText.x = Math.round((top.width - headerText.width) / 2);
-  headerText.y = Math.round((margin - headerText.height) / 2);
+  const headerText = new Text({
+    text: "PIXI MONSTER SLOTS!",
+    style,
+    x: Math.round(top.width / 2),
+    y: Math.round(top.height / 2),
+  });
 
   top.addChild(headerText);
 
@@ -51,35 +50,37 @@ export function generateHudBottom(
   play: () => void,
   stop: () => void,
 ): Graphics {
-  const playText = new Text({ text: "Spin", style });
-  const stopText = new Text({ text: "stop", style });
-
-  const bottom: Graphics = new Graphics()
-    .rect(0, SYMBOL_SIZE * 3 + margin, screen.width, margin);
-    // .fill({ color: 0x0 });
-
-  playText.eventMode = "static";
-  stopText.eventMode = "static";
-
-  bottom.eventMode = "static";
-  bottom.cursor = "pointer";
-
-  playText.x = Math.round((screen.width - playText.width) / 4);
-  // playText.x = 0;
-  playText.y = screen.height - margin + Math.round((margin - playText.height) / 4);
-  // playText.y = 0;
-
-  stopText.x = Math.round((screen.width - stopText.width));
-  stopText.y = screen.height - margin + Math.round((margin - stopText.height));
-
-  playText.addListener("pointerdown", () => {
-    play();
-    console.log("ttt")
+  const playText = new Text({
+    text: "Spin",
+    style,
+    cursor: "pointer",
+    eventMode: "static",
+    x: Math.round(screen.width / 4),
+    y: screen.height - margin + Math.round(margin / 4),
   });
 
-  stopText.addListener("pointerdown", () => {
+  const stopText = new Text({
+    text: "Stop",
+    style,
+    cursor: "pointer",
+    eventMode: "static",
+    x: Math.round(screen.width / 2),
+    y: screen.height - margin + Math.round(margin / 4),
+  });
+
+  const bottom: Graphics = new Graphics({
+    eventMode: "static",
+    cursor: "pointer",
+  })
+    .rect(0, SYMBOL_SIZE * 3 + margin, screen.width, margin)
+    .fill({ color: HUD_COLOR });
+
+  playText.addEventListener("pointerdown", () => {
+    play();
+  });
+
+  stopText.addEventListener("pointerdown", () => {
     stop();
-    console.log("ttt")
   });
 
   bottom.addChild(playText);
@@ -88,7 +89,8 @@ export function generateHudBottom(
   return bottom;
 }
 
-export function generateTextStyle(fill: FillGradient): TextStyle {
+export function generateTextStyle(): TextStyle {
+  const fill = generateGradientFill();
   return new TextStyle({
     fontFamily: "Arial",
     fontSize: 36,
@@ -96,12 +98,6 @@ export function generateTextStyle(fill: FillGradient): TextStyle {
     fontWeight: "bold",
     fill: { fill },
     stroke: { color: 0x4a1850, width: 5 },
-    dropShadow: {
-      color: 0x000000,
-      angle: Math.PI / 6,
-      blur: 4,
-      distance: 6,
-    },
     wordWrap: true,
     wordWrapWidth: 440,
   });

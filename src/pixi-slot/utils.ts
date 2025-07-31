@@ -1,6 +1,16 @@
-import { Assets, Sprite, Texture } from "pixi.js";
+import { Assets, type Container, Graphics, Sprite, Texture } from "pixi.js";
 import { Reel } from "./reel.ts";
-import { REEL_WIDTH, SYMBOL_SIZE } from "./constants.ts";
+import {
+  REEL_WIDTH,
+  REELS_COUNT,
+  SYMBOL_COUNT,
+  SYMBOL_SIZE,
+} from "./constants/constants.ts";
+import {
+  BACKGROUND_REEL_COLOR,
+  REEL_BORDER_COLOR,
+  REEL_BORDER_WIDTH,
+} from "./constants/style.constants.ts";
 
 export async function loadTextureAssets(): Promise<void> {
   await Assets.load([
@@ -43,7 +53,31 @@ export function createReel(reelNum: number): Reel {
   reel.blur.strengthX = 0;
   reel.blur.strengthY = 0;
 
+  addReelBackground(reel);
+
   return reel;
+}
+
+export function generateReelsArray(mainContainer: Container): Reel[] {
+  const reels: Reel[] = [];
+  for (let reelNum = 0; reelNum < REELS_COUNT; reelNum++) {
+    const reel = createReel(reelNum);
+
+    mainContainer.addChild(reel.container);
+
+    reels.push(reel);
+
+    reel.createSymbolsForReel(SYMBOL_COUNT);
+  }
+  return reels;
+}
+
+function addReelBackground(reel: Reel): void {
+  const borders = new Graphics()
+    .rect(0, 0, REEL_WIDTH, SYMBOL_SIZE * SYMBOL_COUNT)
+    .fill(BACKGROUND_REEL_COLOR)
+    .stroke({ width: REEL_BORDER_WIDTH, color: REEL_BORDER_COLOR });
+  reel.container.addChild(borders);
 }
 
 export function createSymbol(textures: Texture[], symbolNum: number): Sprite {
